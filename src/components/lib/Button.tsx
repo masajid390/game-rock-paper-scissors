@@ -4,7 +4,8 @@ const Button = styled.button`
   border: ${({ theme }) => `1px solid ${theme.colors.main}`};
   border-radius: ${({ theme }) => `${theme.borderRadius}`};
   background: transparent;
-  padding: 8px 16px;
+  padding: ${({ theme }) =>
+    `${theme.gutterSpace}px ${theme.gutterSpace * 2}px`};
   text-transform: uppercase;
   outline: none;
   cursor: pointer;
