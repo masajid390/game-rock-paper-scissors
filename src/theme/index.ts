@@ -1,6 +1,7 @@
 import { DefaultTheme } from "styled-components";
 
 const theme: DefaultTheme = {
+  gutterSpace: 8,
   borderRadius: "8px",
 
   colors: {
