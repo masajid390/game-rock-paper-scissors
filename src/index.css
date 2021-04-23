@@ -6,6 +6,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-image: linear-gradient(hsl(214, 47%, 23%), hsl(237, 49%, 15%));
+  text-transform: uppercase;
 }
 
 code {
