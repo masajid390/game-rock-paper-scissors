@@ -22,7 +22,6 @@ const Title = styled.div`
 const TitleWord = styled.h1`
   margin: 0;
   color: ${({ theme }) => `${theme.colors.main}`};
-  text-transform: uppercase;
   line-height: 0.8;
   ${down("xs")} {
     font-size: 22px;
