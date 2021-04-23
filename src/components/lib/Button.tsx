@@ -40,6 +40,7 @@ const IconButtonContainer = styled("div")<IconButtonContainerProps>`
 
 export interface IconButtonProps extends IconButtonContainerProps {
   iconSrc: string;
+  imgAlt?: string;
 }
 const IconButton: FC<IconButtonProps> = ({
   size,
@@ -47,6 +48,7 @@ const IconButton: FC<IconButtonProps> = ({
   gradientToColor,
   iconSrc,
   border,
+  imgAlt,
 }) => (
   <IconButtonContainer
     size={size}
@@ -54,7 +56,7 @@ const IconButton: FC<IconButtonProps> = ({
     gradientToColor={gradientToColor}
     border={border}
   >
-    <img src={iconSrc} />
+    <img src={iconSrc} alt={imgAlt} />
   </IconButtonContainer>
 );
 export { Button, IconButton };
