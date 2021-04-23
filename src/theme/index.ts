@@ -8,6 +8,11 @@ const theme: DefaultTheme = {
     main: "hsl(0, 0%, 100%)",
     secondary: "hsl(229, 25%, 31%)",
   },
+
+  breakpoints: {
+    xs: "0px",
+    sm: "376px",
+  },
 };
 
 export { theme };

@@ -11,5 +11,9 @@ declare module "styled-components" {
       main: string;
       secondary: string;
     };
+
+    breakpoints: {
+      [name in "xs" | "sm"]: string;
+    };
   }
 }
