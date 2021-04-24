@@ -1,15 +1,32 @@
 import { FC } from "react";
-import styled from "styled-components";
-const Button = styled.button`
-  color: ${({ theme }) => `${theme.colors.main}`};
-  border: ${({ theme }) => `1px solid ${theme.colors.main}`};
-  border-radius: ${({ theme }) => `${theme.borderRadius}`};
-  background: transparent;
-  padding: ${({ theme }) =>
-    `${theme.gutterSpace}px ${theme.gutterSpace * 4}px`};
-  text-transform: uppercase;
-  outline: none;
-  cursor: pointer;
+import styled, { DefaultTheme } from "styled-components";
+const Button = styled("button")<{
+  color?: string;
+  background?: string;
+  theme: DefaultTheme;
+}>`
+  ${({ color, background, theme }) => {
+    const colorKeys = Object.keys(theme.colors);
+    if (color && colorKeys.includes(color)) {
+      color = theme.colors[color];
+    }
+    if (background && colorKeys.includes(background)) {
+      background = theme.colors[background];
+    }
+    return `
+      color: ${color ?? theme.colors.main};
+      border: 1px solid ${theme.colors.main};
+      border-radius:${theme.borderRadius};
+      background: ${background ?? "transparent"};
+      padding: ${theme.gutterSpace}px ${theme.gutterSpace * 4}px;
+      text-transform: uppercase;
+      outline: none;
+      cursor: pointer;
+      letter-spacing: 1.5px;
+      font-size: 12px;
+      font-weight: bold;
+    `;
+  }}
 `;
 
 interface IconButtonContainerProps {
