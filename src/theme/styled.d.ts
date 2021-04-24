@@ -7,10 +7,7 @@ declare module "styled-components" {
     gutterSpace: number;
     borderRadius: string;
 
-    colors: {
-      main: string;
-      secondary: string;
-    };
+    colors: { [key: string]: string };
 
     breakpoints: {
       [name in "xs" | "sm"]: string;
