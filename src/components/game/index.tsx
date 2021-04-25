@@ -160,8 +160,7 @@ const appReducer = (state: GameState, action: Action): GameState => {
       return {
         ...state,
         currentStep: "Result",
-        score: payload ? state.score + 1 : state.score - 1,
-        win: payload,
+        ...payload,
       };
     }
     case "PlayAgain": {
@@ -232,6 +231,7 @@ const Game: FC = memo(() => {
     ({ id }) => state.computerSelectedId === id
   );
   const step = state.currentStep;
+  const score = state.score;
 
   const closeRules = useCallback(() => setShowRules(false), []);
 
@@ -252,12 +252,14 @@ const Game: FC = memo(() => {
         payload: availableControls[randomIndex].id,
       });
     } else if (step === "ComputerTurned" && computerSelected) {
+      const win = userSelected?.canBeat.includes(computerSelected.id); // constructing win state
+      const newScore = win ? score + 1 : score - 1;
       dispatch({
         type: "Result",
-        payload: userSelected?.canBeat.includes(computerSelected.id), // constructing win state
+        payload: { win, score: newScore },
       });
     }
-  }, [dispatch, controls, userSelected, computerSelected, step]);
+  }, [dispatch, controls, userSelected, computerSelected, step, score]);
 
   const playAgain = useCallback(() => dispatch({ type: "PlayAgain" }), [
     dispatch,
