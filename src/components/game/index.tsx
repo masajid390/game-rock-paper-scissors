@@ -1,4 +1,12 @@
-import { FC, memo, useCallback, useMemo, useReducer, Dispatch } from "react";
+import {
+  FC,
+  memo,
+  useCallback,
+  useMemo,
+  useReducer,
+  Dispatch,
+  useState,
+} from "react";
 import styled from "styled-components";
 import { Button } from "../lib/Button";
 import { ActionBar } from "../lib/ActionBar";
@@ -9,6 +17,8 @@ import { SelectionControl } from "../../interfaces/game";
 import { useBreakpoint } from "styled-breakpoints/react-styled";
 import { down } from "styled-breakpoints";
 import { ComputerTurn } from "./ComputerTurn";
+import { Modal } from "../lib/Modal";
+import { RulesModal } from "./RulesModal";
 
 const Container = styled("div")<{ isMobile: boolean | null }>`
 ${({ theme, isMobile }) => `
@@ -205,6 +215,7 @@ const Game: FC = memo(() => {
     score: 0,
     currentStep: "UserTurn",
   });
+  const [showRules, setShowRules] = useState<boolean>(false);
   const isMobile = useBreakpoint(down("xs"));
   const size = isMobile ? 100 : 135;
   const top = isMobile ? 60 : 80;
@@ -252,6 +263,8 @@ const Game: FC = memo(() => {
   const computerSelected = controls.find(
     ({ id }) => state.computerSelectedId === id
   );
+
+  const closeRules = useCallback(() => setShowRules(false), []);
   return (
     <Container isMobile={isMobile}>
       <GameContent>
@@ -269,8 +282,13 @@ const Game: FC = memo(() => {
         />
       </GameContent>
       <ActionBar>
-        <Button>Rules</Button>
+        <Button onClick={() => setShowRules(true)}>Rules</Button>
       </ActionBar>
+      {showRules && (
+        <Modal>
+          <RulesModal isMobile={isMobile} close={closeRules} />
+        </Modal>
+      )}
     </Container>
   );
 });
