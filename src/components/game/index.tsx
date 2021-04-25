@@ -1,4 +1,12 @@
-import { FC, memo, useCallback, useMemo, useReducer, useState } from "react";
+import {
+  FC,
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useState,
+} from "react";
 import styled from "styled-components";
 import { Button } from "../lib/Button";
 import { ActionBar } from "../lib/ActionBar";
@@ -11,6 +19,7 @@ import { down } from "styled-breakpoints";
 import { ComputerTurn } from "./ComputerTurn";
 import { Modal } from "../lib/Modal";
 import { RulesModal } from "./RulesModal";
+import { useLocalStorage } from "../../hooks/app";
 
 const Container = styled("div")<{ isMobile: boolean | null }>`
 ${({ theme, isMobile }) => `
@@ -49,7 +58,8 @@ type GameAction =
   | "UserCompletedTurn"
   | "ComputerCompletedTurn"
   | "Result"
-  | "PlayAgain";
+  | "PlayAgain"
+  | "SetScoreFromLocalStorage";
 
 interface PlayAreaProps {
   controls: SelectionControl[];
@@ -171,12 +181,18 @@ const appReducer = (state: GameState, action: Action): GameState => {
         currentStep: "UserTurn",
       };
     }
+    case "SetScoreFromLocalStorage": {
+      return {
+        ...state,
+        score: payload,
+      };
+    }
     default: {
       return state;
     }
   }
 };
-
+const SCORE_KEY = "__ROCK_PAPER_SCISSORS_SCORE__";
 const Game: FC = memo(() => {
   const [state, dispatch] = useReducer(appReducer, {
     score: 0,
@@ -184,6 +200,7 @@ const Game: FC = memo(() => {
   });
   const [showRules, setShowRules] = useState<boolean>(false);
   const isMobile = useBreakpoint(down("xs"));
+  const { getLocalStorage, setLocalStorage } = useLocalStorage();
   const size = isMobile ? 100 : 135;
   const top = isMobile ? 60 : 80;
   const left = isMobile ? 8 : 80;
@@ -233,6 +250,13 @@ const Game: FC = memo(() => {
   const step = state.currentStep;
   const score = state.score;
 
+  useEffect(() => {
+    const existingScore = getLocalStorage(SCORE_KEY);
+    if (existingScore !== null) {
+      dispatch({ type: "SetScoreFromLocalStorage", payload: existingScore });
+    }
+  }, [getLocalStorage, dispatch]);
+
   const closeRules = useCallback(() => setShowRules(false), []);
 
   const userTurn = useCallback(
@@ -254,12 +278,21 @@ const Game: FC = memo(() => {
     } else if (step === "ComputerTurned" && computerSelected) {
       const win = userSelected?.canBeat.includes(computerSelected.id); // constructing win state
       const newScore = win ? score + 1 : score - 1;
+      setLocalStorage(SCORE_KEY, newScore);
       dispatch({
         type: "Result",
         payload: { win, score: newScore },
       });
     }
-  }, [dispatch, controls, userSelected, computerSelected, step, score]);
+  }, [
+    dispatch,
+    controls,
+    userSelected,
+    computerSelected,
+    step,
+    score,
+    setLocalStorage,
+  ]);
 
   const playAgain = useCallback(() => dispatch({ type: "PlayAgain" }), [
     dispatch,
