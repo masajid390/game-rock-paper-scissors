@@ -1,12 +1,4 @@
-import {
-  FC,
-  memo,
-  useCallback,
-  useMemo,
-  useReducer,
-  Dispatch,
-  useState,
-} from "react";
+import { FC, memo, useCallback, useMemo, useReducer, useState } from "react";
 import styled from "styled-components";
 import { Button } from "../lib/Button";
 import { ActionBar } from "../lib/ActionBar";
@@ -66,7 +58,9 @@ interface PlayAreaProps {
   computerSelected?: SelectionControl;
   win?: boolean;
   isMobile: boolean | null;
-  dispatch: Dispatch<Action>;
+  userTurn: (userSelectedId: string) => void;
+  computerTurn: () => void;
+  playAgain: () => void;
 }
 const PlayArea: FC<PlayAreaProps> = ({
   controls,
@@ -75,36 +69,10 @@ const PlayArea: FC<PlayAreaProps> = ({
   computerSelected,
   win,
   isMobile,
-  dispatch,
+  userTurn,
+  computerTurn,
+  playAgain,
 }) => {
-  const userTurn = useCallback(
-    (userSelectedId: string) =>
-      dispatch({ type: "UserCompletedTurn", payload: userSelectedId }),
-    [dispatch]
-  );
-
-  const computerTurn = useCallback(() => {
-    if (step === "WaitingForComputerTurn") {
-      const availableControls = controls.filter(
-        ({ id }) => userSelected?.id !== id
-      );
-      const randomIndex = Math.floor(Math.random() * availableControls.length);
-      dispatch({
-        type: "ComputerCompletedTurn",
-        payload: availableControls[randomIndex].id,
-      });
-    } else if (step === "ComputerTurned" && computerSelected) {
-      dispatch({
-        type: "Result",
-        payload: userSelected?.canBeat.includes(computerSelected.id), // constructing win state
-      });
-    }
-  }, [dispatch, controls, userSelected, computerSelected, step]);
-
-  const playAgain = useCallback(() => dispatch({ type: "PlayAgain" }), [
-    dispatch,
-  ]);
-
   if (step === "UserTurn") {
     return (
       <UserTurnContainer isMobile={isMobile}>
@@ -263,8 +231,38 @@ const Game: FC = memo(() => {
   const computerSelected = controls.find(
     ({ id }) => state.computerSelectedId === id
   );
+  const step = state.currentStep;
 
   const closeRules = useCallback(() => setShowRules(false), []);
+
+  const userTurn = useCallback(
+    (userSelectedId: string) =>
+      dispatch({ type: "UserCompletedTurn", payload: userSelectedId }),
+    [dispatch]
+  );
+
+  const computerTurn = useCallback(() => {
+    if (step === "WaitingForComputerTurn") {
+      const availableControls = controls.filter(
+        ({ id }) => userSelected?.id !== id
+      );
+      const randomIndex = Math.floor(Math.random() * availableControls.length);
+      dispatch({
+        type: "ComputerCompletedTurn",
+        payload: availableControls[randomIndex].id,
+      });
+    } else if (step === "ComputerTurned" && computerSelected) {
+      dispatch({
+        type: "Result",
+        payload: userSelected?.canBeat.includes(computerSelected.id), // constructing win state
+      });
+    }
+  }, [dispatch, controls, userSelected, computerSelected, step]);
+
+  const playAgain = useCallback(() => dispatch({ type: "PlayAgain" }), [
+    dispatch,
+  ]);
+
   return (
     <Container isMobile={isMobile}>
       <GameContent>
@@ -278,7 +276,9 @@ const Game: FC = memo(() => {
           computerSelected={computerSelected}
           win={state.win}
           isMobile={isMobile}
-          dispatch={dispatch}
+          userTurn={userTurn}
+          computerTurn={computerTurn}
+          playAgain={playAgain}
         />
       </GameContent>
       <ActionBar>
