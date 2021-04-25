@@ -14,6 +14,7 @@ const Container = styled("div")<{ isMobile: boolean | null }>`
 ${({ theme, isMobile }) => `
     padding: ${theme.gutterSpace * (isMobile ? 3 : 6)}px;
     height: calc(100% - ${theme.gutterSpace * (isMobile ? 3 : 6) * 2}px);
+    overflow: hidden;
   `}}
 `;
 
