@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { IconButton } from "../lib/Button";
-import { FC } from "react";
+import { FC, memo } from "react";
 import { SelectionControl, IPosition } from "../../interfaces/game";
 import { down } from "styled-breakpoints";
 
@@ -40,43 +40,45 @@ interface UserTurnProps {
   userTurn: (userSelectedId: string) => void;
 }
 
-const UserTurn: FC<UserTurnProps> = ({ controls, backgroundSrc, userTurn }) => {
-  return (
-    <Container>
-      <Content>
-        <Background src={backgroundSrc} />
-        {controls.map((control) => {
-          const {
-            id,
-            iconSrc,
-            gradientFromColor,
-            gradientToColor,
-            size,
-            border,
-            position: { top, right, bottom, left },
-          } = control;
-          return (
-            <IconButtonContainer
-              key={id}
-              top={top}
-              right={right}
-              bottom={bottom}
-              left={left}
-              onClick={() => userTurn(control.id)}
-            >
-              <IconButton
-                iconSrc={iconSrc}
-                gradientFromColor={gradientFromColor}
-                gradientToColor={gradientToColor}
-                size={size}
-                border={border}
-              />
-            </IconButtonContainer>
-          );
-        })}
-      </Content>
-    </Container>
-  );
-};
+const UserTurn: FC<UserTurnProps> = memo(
+  ({ controls, backgroundSrc, userTurn }) => {
+    return (
+      <Container>
+        <Content>
+          <Background src={backgroundSrc} />
+          {controls.map((control) => {
+            const {
+              id,
+              iconSrc,
+              gradientFromColor,
+              gradientToColor,
+              size,
+              border,
+              position: { top, right, bottom, left },
+            } = control;
+            return (
+              <IconButtonContainer
+                key={id}
+                top={top}
+                right={right}
+                bottom={bottom}
+                left={left}
+                onClick={() => userTurn(control.id)}
+              >
+                <IconButton
+                  iconSrc={iconSrc}
+                  gradientFromColor={gradientFromColor}
+                  gradientToColor={gradientToColor}
+                  size={size}
+                  border={border}
+                />
+              </IconButtonContainer>
+            );
+          })}
+        </Content>
+      </Container>
+    );
+  }
+);
 
 export { UserTurn };

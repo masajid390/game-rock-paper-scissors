@@ -1,4 +1,4 @@
-import { FC, useEffect } from "react";
+import { FC, useEffect, memo } from "react";
 import styled from "styled-components";
 import { SelectionControl } from "../../interfaces/game";
 import { Button, IconButton } from "../lib/Button";
@@ -119,85 +119,87 @@ interface ComputerTurnProps {
   playAgain?: () => void;
 }
 
-const ComputerTurn: FC<ComputerTurnProps> = ({
-  timeToThink,
-  userSelected,
-  computerSelected,
-  win,
-  computerTurn,
-  playAgain,
-}) => {
-  const isMobile = useBreakpoint(down("xs"));
+const ComputerTurn: FC<ComputerTurnProps> = memo(
+  ({
+    timeToThink,
+    userSelected,
+    computerSelected,
+    win,
+    computerTurn,
+    playAgain,
+  }) => {
+    const isMobile = useBreakpoint(down("xs"));
 
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
+    useEffect(() => {
+      let timer: NodeJS.Timeout;
 
-    if (timeToThink !== undefined && computerTurn) {
-      timer = setTimeout(computerTurn, timeToThink);
-    }
+      if (timeToThink !== undefined && computerTurn) {
+        timer = setTimeout(computerTurn, timeToThink);
+      }
 
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [timeToThink, computerTurn]);
+      return () => {
+        clearTimeout(timer);
+      };
+    }, [timeToThink, computerTurn]);
 
-  const yourZIndex = win === false ? 2 : 1;
+    const yourZIndex = win === false ? 2 : 1;
 
-  return (
-    <Container>
-      <Row>
-        <Column zIndex={yourZIndex}>
-          <Container>
-            <Order order={isMobile ? 2 : 1}>
-              <Text fontSize={isMobile ? 16 : 22}>You Picked</Text>
-            </Order>
-            <Order order={isMobile ? 1 : 2}>
-              <IconButton {...userSelected} />
-            </Order>
-          </Container>
-          {win && <Celebration isMobile={isMobile} />}
-        </Column>
-        {!isMobile && win !== undefined && (
-          <Column zIndex={3}>
-            {win ? (
-              <YouWin playAgain={playAgain} />
-            ) : (
-              <YouLoss playAgain={playAgain} />
-            )}
-          </Column>
-        )}
-        <Column zIndex={1}>
-          <Container>
-            <Order order={isMobile ? 2 : 1}>
-              <Text fontSize={isMobile ? 16 : 22}>The House Picked</Text>
-            </Order>
-            <Order order={isMobile ? 1 : 2}>
-              {computerSelected ? (
-                <IconButton {...computerSelected} />
-              ) : (
-                <EmptyControl
-                  size={userSelected.size}
-                  marginBottom={isMobile ? 4 : 12}
-                />
-              )}
-            </Order>
-          </Container>
-          {win === false && <Celebration isMobile={isMobile} />}
-        </Column>
-      </Row>
-      {isMobile && win !== undefined && (
+    return (
+      <Container>
         <Row>
-          <Column>
-            {win ? (
-              <YouWin playAgain={playAgain} />
-            ) : (
-              <YouLoss playAgain={playAgain} />
-            )}
+          <Column zIndex={yourZIndex}>
+            <Container>
+              <Order order={isMobile ? 2 : 1}>
+                <Text fontSize={isMobile ? 16 : 22}>You Picked</Text>
+              </Order>
+              <Order order={isMobile ? 1 : 2}>
+                <IconButton {...userSelected} />
+              </Order>
+            </Container>
+            {win && <Celebration isMobile={isMobile} />}
+          </Column>
+          {!isMobile && win !== undefined && (
+            <Column zIndex={3}>
+              {win ? (
+                <YouWin playAgain={playAgain} />
+              ) : (
+                <YouLoss playAgain={playAgain} />
+              )}
+            </Column>
+          )}
+          <Column zIndex={1}>
+            <Container>
+              <Order order={isMobile ? 2 : 1}>
+                <Text fontSize={isMobile ? 16 : 22}>The House Picked</Text>
+              </Order>
+              <Order order={isMobile ? 1 : 2}>
+                {computerSelected ? (
+                  <IconButton {...computerSelected} />
+                ) : (
+                  <EmptyControl
+                    size={userSelected.size}
+                    marginBottom={isMobile ? 4 : 12}
+                  />
+                )}
+              </Order>
+            </Container>
+            {win === false && <Celebration isMobile={isMobile} />}
           </Column>
         </Row>
-      )}
-    </Container>
-  );
-};
+        {isMobile && win !== undefined && (
+          <Row>
+            <Column>
+              {win ? (
+                <YouWin playAgain={playAgain} />
+              ) : (
+                <YouLoss playAgain={playAgain} />
+              )}
+            </Column>
+          </Row>
+        )}
+      </Container>
+    );
+  }
+);
 
 export { ComputerTurn };
