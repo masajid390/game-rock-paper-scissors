@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { IconButton } from "../lib/Button";
+import { RoundButton } from "../lib/Button";
 import { FC, memo } from "react";
 import { SelectionControl, IPosition } from "../../interfaces/game";
 import { down } from "styled-breakpoints";
@@ -65,13 +65,14 @@ const UserTurn: FC<UserTurnProps> = memo(
                 left={left}
                 onClick={() => userTurn(control.id)}
               >
-                <IconButton
-                  iconSrc={iconSrc}
+                <RoundButton
                   gradientFromColor={gradientFromColor}
                   gradientToColor={gradientToColor}
                   size={size}
                   border={border}
-                />
+                >
+                  <img src={iconSrc} alt="Icon Button" />
+                </RoundButton>
               </IconButtonContainer>
             );
           })}

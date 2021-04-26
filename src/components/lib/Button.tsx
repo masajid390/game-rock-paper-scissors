@@ -29,13 +29,13 @@ const Button = styled("button")<{
   }}
 `;
 
-interface IconButtonContainerProps {
+interface RoundButtonContainerProps {
   size: number;
   gradientFromColor: string;
   gradientToColor: string;
   border: number;
 }
-const IconButtonContainer = styled("div")<IconButtonContainerProps>`
+const RoundButtonContainer = styled("div")<RoundButtonContainerProps>`
   ${({ size, gradientFromColor, gradientToColor, border }) => {
     const shadow = border / 2.5;
     return `
@@ -55,25 +55,23 @@ const IconButtonContainer = styled("div")<IconButtonContainerProps>`
   }}
 `;
 
-export interface IconButtonProps extends IconButtonContainerProps {
-  iconSrc: string;
-  imgAlt?: string;
+export interface RoundButtonProps extends RoundButtonContainerProps {
+  children?: React.ReactNode;
 }
-const IconButton: FC<IconButtonProps> = ({
+const RoundButton: FC<RoundButtonProps> = ({
+  children,
   size,
   gradientFromColor,
   gradientToColor,
-  iconSrc,
   border,
-  imgAlt,
 }) => (
-  <IconButtonContainer
+  <RoundButtonContainer
     size={size}
     gradientFromColor={gradientFromColor}
     gradientToColor={gradientToColor}
     border={border}
   >
-    <img src={iconSrc} alt={imgAlt} />
-  </IconButtonContainer>
+    {children}
+  </RoundButtonContainer>
 );
-export { Button, IconButton };
+export { Button, RoundButton };

@@ -1,7 +1,7 @@
 import { FC, useEffect, memo } from "react";
 import styled from "styled-components";
 import { GameMode, SelectionControl } from "../../interfaces/game";
-import { Button, IconButton } from "../lib/Button";
+import { Button, RoundButton } from "../lib/Button";
 import { useBreakpoint } from "styled-breakpoints/react-styled";
 import { down } from "styled-breakpoints";
 import { WaveBox } from "../lib/WaveBox";
@@ -168,7 +168,9 @@ const ComputerTurn: FC<ComputerTurnProps> = memo(
                 <Text fontSize={isMobile ? 16 : 22}>You Picked</Text>
               </Order>
               <Order order={isMobile ? 1 : 2}>
-                <IconButton {...userSelected} />
+                <RoundButton {...userSelected}>
+                  <img src={userSelected.iconSrc} alt="Icon Button" />
+                </RoundButton>
               </Order>
             </Container>
             {win && <Celebration isMobile={isMobile} gameMode={gameMode} />}
@@ -189,7 +191,9 @@ const ComputerTurn: FC<ComputerTurnProps> = memo(
               </Order>
               <Order order={isMobile ? 1 : 2}>
                 {computerSelected ? (
-                  <IconButton {...computerSelected} />
+                  <RoundButton {...computerSelected}>
+                    <img src={computerSelected.iconSrc} alt="Icon Button" />
+                  </RoundButton>
                 ) : (
                   <EmptyControl
                     size={userSelected.size}

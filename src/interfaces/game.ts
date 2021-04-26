@@ -1,4 +1,4 @@
-import { IconButtonProps } from "../components/lib/Button";
+import { RoundButtonProps } from "../components/lib/Button";
 
 export interface IPosition {
   top?: number;
@@ -7,8 +7,9 @@ export interface IPosition {
   left?: number;
 }
 
-export interface SelectionControl extends IconButtonProps {
+export interface SelectionControl extends RoundButtonProps {
   id: string;
+  iconSrc: string;
   border: number;
   position: IPosition;
   canBeat: string[];
