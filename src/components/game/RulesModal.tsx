@@ -2,7 +2,6 @@ import { FC } from "react";
 import { CloseIcon } from "../lib/icons";
 import { down } from "styled-breakpoints";
 import styled from "styled-components";
-import TriangleRules from "../../assets/game/triangle_rules.svg";
 
 const Container = styled.div`
   ${({ theme: { colors, gutterSpace, borderRadius } }) => `
@@ -41,10 +40,11 @@ const CloseButton = styled.div`
 
 interface RulesModalProps {
   isMobile: boolean | null;
+  imageSrc: string;
   close: () => void;
 }
 
-const RulesModal: FC<RulesModalProps> = ({ isMobile, close }) => {
+const RulesModal: FC<RulesModalProps> = ({ isMobile, imageSrc, close }) => {
   return (
     <Container>
       <HeadingContainer>
@@ -55,7 +55,7 @@ const RulesModal: FC<RulesModalProps> = ({ isMobile, close }) => {
           </CloseButton>
         )}
       </HeadingContainer>
-      <img src={TriangleRules} alt="Missing rules" />
+      <img src={imageSrc} alt="Missing rules" />
       {isMobile && (
         <CloseButton onClick={close}>
           <img src={CloseIcon} alt="Close" />

@@ -12,14 +12,24 @@ import { Button } from "../lib/Button";
 import { ActionBar } from "../lib/ActionBar";
 import { Header } from "./Header";
 import { UserTurn } from "./UserTurn";
-import { BGTriangle, PaperIcon, RockIcon, ScissorIcon } from "../lib/icons";
-import { GameUI, SelectionControl } from "../../interfaces/game";
+import {
+  BGTriangle,
+  PaperIcon,
+  RockIcon,
+  ScissorIcon,
+  SpockIcon,
+  LizardIcon,
+  BGPentagon,
+} from "../lib/icons";
+import { GameUI, SelectionControl, GameMode } from "../../interfaces/game";
 import { useBreakpoint } from "styled-breakpoints/react-styled";
 import { down } from "styled-breakpoints";
 import { ComputerTurn } from "./ComputerTurn";
 import { Modal } from "../lib/Modal";
 import { RulesModal } from "./RulesModal";
 import { useLocalStorage } from "../../hooks/app";
+import BasicRules from "../../assets/game/rules/basic.svg";
+import AdvanceRules from "../../assets/game/rules/advance.svg";
 
 const Container = styled("div")<{ isMobile: boolean | null }>`
 ${({ theme, isMobile }) => `
@@ -29,9 +39,12 @@ ${({ theme, isMobile }) => `
   `}}
 `;
 
-const UserTurnContainer = styled("div")<{ isMobile: boolean | null }>`
-${({ isMobile }) => `
-    margin-top: ${isMobile ? "45%" : "40%"};
+const UserTurnContainer = styled("div")<{
+  isMobile: boolean | null;
+  gameMode: GameMode;
+}>`
+${({ isMobile, gameMode }) => `
+    margin-top: ${isMobile ? "45%" : gameMode === "Basic" ? "40%" : "30%"};
   `}}
 `;
 
@@ -61,7 +74,118 @@ type GameAction =
   | "PlayAgain"
   | "SetScoreFromLocalStorage";
 
+const useBasicGameUI = (isMobile: boolean | null): GameUI => {
+  const size = isMobile ? 100 : 135;
+  const top = isMobile ? 60 : 80;
+  const left = isMobile ? 8 : 80;
+  const right = isMobile ? 8 : 70;
+  const bottom = isMobile ? 8 : 30;
+  const border = isMobile ? 15 : 20;
+  return useMemo(
+    () => ({
+      controls: [
+        {
+          id: "paper",
+          iconSrc: PaperIcon,
+          gradientFromColor: "hsl(230, 89%, 62%)",
+          gradientToColor: "hsl(230, 89%, 65%)",
+          size,
+          border,
+          position: { top: -top, left: -left },
+          canBeat: ["rock"],
+        },
+        {
+          id: "scissor",
+          iconSrc: ScissorIcon,
+          gradientFromColor: "hsl(39, 89%, 49%)",
+          gradientToColor: "hsl(40, 84%, 53%)",
+          size,
+          border,
+          position: { top: -top, right: -right },
+          canBeat: ["paper"],
+        },
+        {
+          id: "rock",
+          iconSrc: RockIcon,
+          gradientFromColor: "hsl(349, 71%, 52%)",
+          gradientToColor: "hsl(349, 70%, 56%)",
+          size,
+          border,
+          position: { bottom: -bottom },
+          canBeat: ["scissor"],
+        },
+      ],
+      backgroundSrc: BGTriangle,
+    }),
+    [size, top, left, right, bottom, border]
+  );
+};
+
+const useAdvanceGameUI = (isMobile: boolean | null): GameUI => {
+  const size = isMobile ? 80 : 100;
+  const border = isMobile ? 15 : 20;
+  return useMemo(
+    () => ({
+      controls: [
+        {
+          id: "scissor",
+          iconSrc: ScissorIcon,
+          gradientFromColor: "hsl(39, 89%, 49%)",
+          gradientToColor: "hsl(40, 84%, 53%)",
+          size,
+          border,
+          position: { top: isMobile ? -50 : -60, right: isMobile ? 105 : 90 },
+          canBeat: ["paper", "lizard"],
+        },
+        {
+          id: "spock",
+          iconSrc: SpockIcon,
+          gradientFromColor: "hsl(189, 59%, 53%)",
+          gradientToColor: "hsl(189, 58%, 57%)",
+          size,
+          border,
+          position: { top: isMobile ? 40 : 55, left: isMobile ? -10 : -45 },
+          canBeat: ["scissor", "rock"],
+        },
+        {
+          id: "paper",
+          iconSrc: PaperIcon,
+          gradientFromColor: "hsl(230, 89%, 62%)",
+          gradientToColor: "hsl(230, 89%, 65%)",
+          size,
+          border,
+          position: { top: isMobile ? 40 : 55, right: isMobile ? -10 : -45 },
+          canBeat: ["rock", "spock"],
+        },
+        {
+          id: "lizard",
+          iconSrc: LizardIcon,
+          gradientFromColor: "hsl(261, 73%, 60%)",
+          gradientToColor: "hsl(261, 72%, 63%)",
+          size,
+          border,
+          position: { bottom: isMobile ? -40 : -45, left: isMobile ? 30 : 0 },
+          canBeat: ["spock", "paper"],
+        },
+        {
+          id: "rock",
+          iconSrc: RockIcon,
+          gradientFromColor: "hsl(349, 71%, 52%)",
+          gradientToColor: "hsl(349, 70%, 56%)",
+          size,
+          border,
+          position: { bottom: isMobile ? -40 : -45, right: isMobile ? 30 : 0 },
+          canBeat: ["lizard", "scissor"],
+        },
+      ],
+      backgroundSrc: BGPentagon,
+    }),
+    [size, border, isMobile]
+  );
+};
+
 interface PlayAreaProps {
+  gameMode: GameMode;
   gameUI: GameUI;
   step: Step;
   userSelected?: SelectionControl;
@@ -73,6 +197,7 @@ interface PlayAreaProps {
   playAgain: () => void;
 }
 const PlayArea: FC<PlayAreaProps> = ({
+  gameMode,
   gameUI,
   step,
   userSelected,
@@ -86,7 +211,7 @@ const PlayArea: FC<PlayAreaProps> = ({
   const { controls, backgroundSrc } = gameUI;
   if (step === "UserTurn") {
     return (
-      <UserTurnContainer isMobile={isMobile}>
+      <UserTurnContainer isMobile={isMobile} gameMode={gameMode}>
         <UserTurn
           controls={controls}
           backgroundSrc={backgroundSrc}
@@ -100,6 +225,7 @@ const PlayArea: FC<PlayAreaProps> = ({
     return (
       <ComputerTurnContainer isMobile={isMobile}>
         <ComputerTurn
+          gameMode={gameMode}
           timeToThink={1000}
           userSelected={userSelected}
           computerTurn={computerTurn}
@@ -112,6 +238,7 @@ const PlayArea: FC<PlayAreaProps> = ({
     return (
       <ComputerTurnContainer isMobile={isMobile}>
         <ComputerTurn
+          gameMode={gameMode}
           timeToThink={0}
           userSelected={userSelected}
           computerSelected={computerSelected}
@@ -125,6 +252,7 @@ const PlayArea: FC<PlayAreaProps> = ({
     return (
       <ComputerTurnContainer isMobile={isMobile}>
         <ComputerTurn
+          gameMode={gameMode}
           userSelected={userSelected}
           computerSelected={computerSelected}
           win={win}
@@ -194,7 +322,10 @@ const appReducer = (state: GameState, action: Action): GameState => {
   }
 };
 const SCORE_KEY = "__ROCK_PAPER_SCISSORS_SCORE__";
-const Game: FC = memo(() => {
+interface GameProps {
+  gameMode: GameMode;
+}
+const Game: FC<GameProps> = memo(({ gameMode }) => {
   const [state, dispatch] = useReducer(appReducer, {
     score: 0,
     currentStep: "UserTurn",
@@ -202,51 +333,10 @@ const Game: FC = memo(() => {
   const [showRules, setShowRules] = useState<boolean>(false);
   const isMobile = useBreakpoint(down("xs"));
   const { getLocalStorage, setLocalStorage } = useLocalStorage();
-  const size = isMobile ? 100 : 135;
-  const top = isMobile ? 60 : 80;
-  const left = isMobile ? 8 : 80;
-  const right = isMobile ? 8 : 70;
-  const bottom = isMobile ? 8 : 30;
-  const border = isMobile ? 15 : 20;
-  const gameUI: GameUI = useMemo(
-    () => ({
-      controls: [
-        {
-          id: "paper",
-          iconSrc: PaperIcon,
-          gradientFromColor: "hsl(230, 89%, 62%)",
-          gradientToColor: "hsl(230, 89%, 65%)",
-          size,
-          border,
-          position: { top: -top, left: -left },
-          canBeat: ["rock"],
-        },
-        {
-          id: "scissor",
-          iconSrc: ScissorIcon,
-          gradientFromColor: "hsl(39, 89%, 49%)",
-          gradientToColor: "hsl(40, 84%, 53%)",
-          size,
-          border,
-          position: { top: -top, right: -right },
-          canBeat: ["paper"],
-        },
-        {
-          id: "rock",
-          iconSrc: RockIcon,
-          gradientFromColor: "hsl(349, 71%, 52%)",
-          gradientToColor: "hsl(349, 70%, 56%)",
-          size,
-          border,
-          position: { bottom: -bottom },
-          canBeat: ["scissor"],
-        },
-      ],
-      backgroundSrc: BGTriangle,
-    }),
-    [size, top, left, right, bottom, border]
-  );
-  const { controls } = gameUI;
+  const basicGameUI: GameUI = useBasicGameUI(isMobile);
+  const advanceGameUI: GameUI = useAdvanceGameUI(isMobile);
+  const gameUI: GameUI = gameMode === "Basic" ? basicGameUI : advanceGameUI;
+  const { controls } = advanceGameUI;
   const userSelected = controls.find(({ id }) => state.userSelectedId === id);
   const computerSelected = controls.find(
     ({ id }) => state.computerSelectedId === id
@@ -309,6 +399,7 @@ const Game: FC = memo(() => {
           <Header score={state.score} />
         </HeaderContainer>
         <PlayArea
+          gameMode={gameMode}
           gameUI={gameUI}
           step={state.currentStep}
           userSelected={userSelected}
@@ -325,7 +416,11 @@ const Game: FC = memo(() => {
       </ActionBar>
       {showRules && (
         <Modal>
-          <RulesModal isMobile={isMobile} close={closeRules} />
+          <RulesModal
+            isMobile={isMobile}
+            close={closeRules}
+            imageSrc={gameMode === "Basic" ? BasicRules : AdvanceRules}
+          />
         </Modal>
       )}
     </Container>

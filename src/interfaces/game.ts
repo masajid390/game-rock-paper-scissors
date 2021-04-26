@@ -18,3 +18,5 @@ export interface GameUI {
   controls: SelectionControl[];
   backgroundSrc: string;
 }
+
+export type GameMode = "Basic" | "Advance";

@@ -17,7 +17,7 @@ const App: FC = () => {
   return (
     <ThemeProvider theme={theme}>
       <AppContainer>
-        <Game />
+        <Game gameMode="Advance" />
       </AppContainer>
     </ThemeProvider>
   );

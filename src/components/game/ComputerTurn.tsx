@@ -1,6 +1,6 @@
 import { FC, useEffect, memo } from "react";
 import styled from "styled-components";
-import { SelectionControl } from "../../interfaces/game";
+import { GameMode, SelectionControl } from "../../interfaces/game";
 import { Button, IconButton } from "../lib/Button";
 import { useBreakpoint } from "styled-breakpoints/react-styled";
 import { down } from "styled-breakpoints";
@@ -71,8 +71,21 @@ const CelebrationContainer = styled("div")<{ top: string }>`
   `}
 `;
 
-const Celebration: FC<{ isMobile: boolean | null }> = ({ isMobile }) => (
-  <CelebrationContainer top={isMobile ? "-41%;" : "-13%"}>
+const Celebration: FC<{ isMobile: boolean | null; gameMode: GameMode }> = ({
+  isMobile,
+  gameMode,
+}) => (
+  <CelebrationContainer
+    top={
+      gameMode === "Basic"
+        ? isMobile
+          ? "-41%"
+          : "-13%"
+        : isMobile
+        ? "-50%"
+        : "-24%"
+    }
+  >
     <WaveBox
       gradients={Array(3).fill({
         start: "hsl(214deg 50% 34%)",
@@ -111,6 +124,7 @@ const YouLoss: FC<WinLossProps> = ({ playAgain }) => (
 );
 
 interface ComputerTurnProps {
+  gameMode: GameMode;
   timeToThink?: number;
   userSelected: SelectionControl;
   computerSelected?: SelectionControl;
@@ -121,6 +135,7 @@ interface ComputerTurnProps {
 
 const ComputerTurn: FC<ComputerTurnProps> = memo(
   ({
+    gameMode,
     timeToThink,
     userSelected,
     computerSelected,
@@ -156,7 +171,7 @@ const ComputerTurn: FC<ComputerTurnProps> = memo(
                 <IconButton {...userSelected} />
               </Order>
             </Container>
-            {win && <Celebration isMobile={isMobile} />}
+            {win && <Celebration isMobile={isMobile} gameMode={gameMode} />}
           </Column>
           {!isMobile && win !== undefined && (
             <Column zIndex={3}>
@@ -183,7 +198,9 @@ const ComputerTurn: FC<ComputerTurnProps> = memo(
                 )}
               </Order>
             </Container>
-            {win === false && <Celebration isMobile={isMobile} />}
+            {win === false && (
+              <Celebration isMobile={isMobile} gameMode={gameMode} />
+            )}
           </Column>
         </Row>
         {isMobile && win !== undefined && (
