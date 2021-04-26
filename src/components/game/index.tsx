@@ -13,7 +13,7 @@ import { ActionBar } from "../lib/ActionBar";
 import { Header } from "./Header";
 import { UserTurn } from "./UserTurn";
 import { BGTriangle, PaperIcon, RockIcon, ScissorIcon } from "../lib/icons";
-import { SelectionControl } from "../../interfaces/game";
+import { GameUI, SelectionControl } from "../../interfaces/game";
 import { useBreakpoint } from "styled-breakpoints/react-styled";
 import { down } from "styled-breakpoints";
 import { ComputerTurn } from "./ComputerTurn";
@@ -62,7 +62,7 @@ type GameAction =
   | "SetScoreFromLocalStorage";
 
 interface PlayAreaProps {
-  controls: SelectionControl[];
+  gameUI: GameUI;
   step: Step;
   userSelected?: SelectionControl;
   computerSelected?: SelectionControl;
@@ -73,7 +73,7 @@ interface PlayAreaProps {
   playAgain: () => void;
 }
 const PlayArea: FC<PlayAreaProps> = ({
-  controls,
+  gameUI,
   step,
   userSelected,
   computerSelected,
@@ -83,12 +83,13 @@ const PlayArea: FC<PlayAreaProps> = ({
   computerTurn,
   playAgain,
 }) => {
+  const { controls, backgroundSrc } = gameUI;
   if (step === "UserTurn") {
     return (
       <UserTurnContainer isMobile={isMobile}>
         <UserTurn
           controls={controls}
-          backgroundSrc={BGTriangle}
+          backgroundSrc={backgroundSrc}
           userTurn={userTurn}
         />
       </UserTurnContainer>
@@ -207,42 +208,45 @@ const Game: FC = memo(() => {
   const right = isMobile ? 8 : 70;
   const bottom = isMobile ? 8 : 30;
   const border = isMobile ? 15 : 20;
-  const controls: SelectionControl[] = useMemo(
-    () => [
-      {
-        id: "paper",
-        iconSrc: PaperIcon,
-        gradientFromColor: "hsl(230, 89%, 62%)",
-        gradientToColor: "hsl(230, 89%, 65%)",
-        size,
-        border,
-        position: { top: -top, left: -left },
-        canBeat: ["rock"],
-      },
-      {
-        id: "scissor",
-        iconSrc: ScissorIcon,
-        gradientFromColor: "hsl(39, 89%, 49%)",
-        gradientToColor: "hsl(40, 84%, 53%)",
-        size,
-        border,
-        position: { top: -top, right: -right },
-        canBeat: ["paper"],
-      },
-      {
-        id: "rock",
-        iconSrc: RockIcon,
-        gradientFromColor: "hsl(349, 71%, 52%)",
-        gradientToColor: "hsl(349, 70%, 56%)",
-        size,
-        border,
-        position: { bottom: -bottom },
-        canBeat: ["scissor"],
-      },
-    ],
+  const gameUI: GameUI = useMemo(
+    () => ({
+      controls: [
+        {
+          id: "paper",
+          iconSrc: PaperIcon,
+          gradientFromColor: "hsl(230, 89%, 62%)",
+          gradientToColor: "hsl(230, 89%, 65%)",
+          size,
+          border,
+          position: { top: -top, left: -left },
+          canBeat: ["rock"],
+        },
+        {
+          id: "scissor",
+          iconSrc: ScissorIcon,
+          gradientFromColor: "hsl(39, 89%, 49%)",
+          gradientToColor: "hsl(40, 84%, 53%)",
+          size,
+          border,
+          position: { top: -top, right: -right },
+          canBeat: ["paper"],
+        },
+        {
+          id: "rock",
+          iconSrc: RockIcon,
+          gradientFromColor: "hsl(349, 71%, 52%)",
+          gradientToColor: "hsl(349, 70%, 56%)",
+          size,
+          border,
+          position: { bottom: -bottom },
+          canBeat: ["scissor"],
+        },
+      ],
+      backgroundSrc: BGTriangle,
+    }),
     [size, top, left, right, bottom, border]
   );
-
+  const { controls } = gameUI;
   const userSelected = controls.find(({ id }) => state.userSelectedId === id);
   const computerSelected = controls.find(
     ({ id }) => state.computerSelectedId === id
@@ -305,7 +309,7 @@ const Game: FC = memo(() => {
           <Header score={state.score} />
         </HeaderContainer>
         <PlayArea
-          controls={controls}
+          gameUI={gameUI}
           step={state.currentStep}
           userSelected={userSelected}
           computerSelected={computerSelected}

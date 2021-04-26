@@ -13,3 +13,8 @@ export interface SelectionControl extends IconButtonProps {
   position: IPosition;
   canBeat: string[];
 }
+
+export interface GameUI {
+  controls: SelectionControl[];
+  backgroundSrc: string;
+}
