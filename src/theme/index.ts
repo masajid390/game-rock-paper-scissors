@@ -11,7 +11,7 @@ const theme: DefaultTheme = {
 
   breakpoints: {
     xs: "0px",
-    sm: "376px",
+    sm: "640px",
   },
 };
 
