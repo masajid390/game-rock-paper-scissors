@@ -1,7 +1,10 @@
 import { memo } from "react";
+import { down } from "styled-breakpoints";
+import { useBreakpoint } from "styled-breakpoints/react-styled";
 import styled from "styled-components";
 import { RoundButton, RoundButtonProps } from "../lib/Button";
 import { Column, Row } from "../lib/Grid";
+import { StyledLink } from "../lib/StyledLink";
 import { BaseHeader } from "./Header";
 
 const Container = styled.div`
@@ -17,20 +20,28 @@ const Levels = styled.div`
 const ControlContainer = styled.div`
   ${({ theme: { gutterSpace } }) => `
         margin: 0 ${gutterSpace * 5}px;
-        font-size: 24px;
+        font-size: 28px;
     `}
+  ${down("xs")} {
+    font-size: 22px;
+  }
 `;
 
-const Header = styled.div`
-  color: ${({ theme: { colors } }) => `${colors.main};`};
-  padding: ${({ theme: { gutterSpace } }) => `${gutterSpace * 6}px;`};
-  text-align: center;
-  font-size: 32px;
-  max-width: 500px;
-  margin: 0 auto;
-  position: fixed;
-  right: 0;
-  left: 0;
+const Header = styled.h1`
+  ${({ theme: { colors, gutterSpace }, ...rest }) => `
+   color: ${colors.main};
+    text-align: center;
+    max-width: 500px;
+    margin: 0 auto;
+    position: fixed;
+    right: 0;
+    left: 0;
+    padding: ${gutterSpace * 6}px;
+  `}
+  ${down("xs")} {
+    padding: ${({ theme: { gutterSpace } }) => `${gutterSpace * 3}px`};
+    font-size: 22px;
+  }
 `;
 
 const HeaderText = styled.div`
@@ -42,8 +53,9 @@ interface LevelControl extends RoundButtonProps {
 }
 
 const GameModes = memo(() => {
-  const size: number = 150;
-  const border: number = 20;
+  const isMobile = useBreakpoint(down("xs"));
+  const size: number = isMobile ? 100 : 150;
+  const border: number = isMobile ? 15 : 20;
   const controls: LevelControl[] = [
     {
       text: "Basic",
@@ -75,9 +87,9 @@ const GameModes = memo(() => {
         <Levels>
           {controls.map((control, key) => (
             <ControlContainer key={key}>
-              <RoundButton {...control} to={control.text}>
-                {control.text}
-              </RoundButton>
+              <StyledLink to={`/${control.text}`}>
+                <RoundButton {...control}>{control.text}</RoundButton>
+              </StyledLink>
             </ControlContainer>
           ))}
         </Levels>
