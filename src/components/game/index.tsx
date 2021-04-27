@@ -30,6 +30,8 @@ import { RulesModal } from "./RulesModal";
 import { useLocalStorage } from "../../hooks/app";
 import BasicRules from "../../assets/game/rules/basic.svg";
 import AdvanceRules from "../../assets/game/rules/advance.svg";
+import { useLocation } from "react-router-dom";
+import { StyledLink } from "../lib/StyledLink";
 
 const Container = styled("div")<{ isMobile: boolean | null }>`
 ${({ theme, isMobile }) => `
@@ -335,8 +337,8 @@ const Game: FC<GameProps> = memo(({ gameMode }) => {
   const { getLocalStorage, setLocalStorage } = useLocalStorage();
   const basicGameUI: GameUI = useBasicGameUI(isMobile);
   const advanceGameUI: GameUI = useAdvanceGameUI(isMobile);
-  const gameUI: GameUI = gameMode === "Basic" ? basicGameUI : advanceGameUI;
-  const { controls } = advanceGameUI;
+  const gameUI: GameUI = gameMode === "Advance" ? advanceGameUI : basicGameUI;
+  const { controls } = gameUI;
   const userSelected = controls.find(({ id }) => state.userSelectedId === id);
   const computerSelected = controls.find(
     ({ id }) => state.computerSelectedId === id
@@ -396,7 +398,7 @@ const Game: FC<GameProps> = memo(({ gameMode }) => {
     <Container isMobile={isMobile}>
       <GameContent>
         <HeaderContainer>
-          <Header score={state.score} />
+          <Header score={state.score} gameMode={gameMode} />
         </HeaderContainer>
         <PlayArea
           gameMode={gameMode}
@@ -412,6 +414,9 @@ const Game: FC<GameProps> = memo(({ gameMode }) => {
         />
       </GameContent>
       <ActionBar>
+        <StyledLink to="/">
+          <Button>Modes</Button>
+        </StyledLink>
         <Button onClick={() => setShowRules(true)}>Rules</Button>
       </ActionBar>
       {showRules && (
@@ -427,4 +432,10 @@ const Game: FC<GameProps> = memo(({ gameMode }) => {
   );
 });
 
-export { Game };
+const GameContainer = memo(() => {
+  const { pathname } = useLocation();
+  const gameMode: GameMode = pathname === "/Advance" ? "Advance" : "Basic";
+  return <Game gameMode={gameMode} />;
+});
+
+export { Game, GameContainer };
