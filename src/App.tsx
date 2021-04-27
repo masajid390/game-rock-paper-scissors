@@ -1,7 +1,9 @@
 import { FC } from "react";
 import styled, { ThemeProvider } from "styled-components";
 import { theme } from "./theme";
-import { Game } from "./components/game";
+import { GameContainer } from "./components/game";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { GameModes } from "./components/game/GameModes";
 
 const AppContainer = styled.div`
   background-image: radial-gradient(
@@ -17,7 +19,12 @@ const App: FC = () => {
   return (
     <ThemeProvider theme={theme}>
       <AppContainer>
-        <Game gameMode="Advance" />
+        <Router>
+          <Switch>
+            <Route path={["/Basic", "/Advance"]} component={GameContainer} />
+            <Route path="/" component={GameModes} />
+          </Switch>
+        </Router>
       </AppContainer>
     </ThemeProvider>
   );
