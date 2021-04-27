@@ -1,4 +1,4 @@
-import { FC, useCallback } from "react";
+import { FC } from "react";
 import styled, { DefaultTheme } from "styled-components";
 const Button = styled("button")<{
   color?: string;
@@ -35,7 +35,7 @@ interface RoundButtonContainerProps {
   gradientToColor: string;
   border: number;
 }
-const RoundButtonContainer = styled("a")<RoundButtonContainerProps>`
+const RoundButtonContainer = styled("div")<RoundButtonContainerProps>`
   ${({ size, gradientFromColor, gradientToColor, border }) => {
     const shadow = border / 2.5;
     return `
@@ -57,8 +57,6 @@ const RoundButtonContainer = styled("a")<RoundButtonContainerProps>`
 
 export interface RoundButtonProps extends RoundButtonContainerProps {
   children?: React.ReactNode;
-  to?: string;
-  onClick?: (event: React.MouseEvent<HTMLAnchorElement>) => void;
 }
 const RoundButton: FC<RoundButtonProps> = ({
   children,
@@ -66,27 +64,14 @@ const RoundButton: FC<RoundButtonProps> = ({
   gradientFromColor,
   gradientToColor,
   border,
-  to,
-  onClick,
-}) => {
-  const _onClick = useCallback(
-    (e: React.MouseEvent<HTMLAnchorElement>) => {
-      e.preventDefault();
-      if (to) window.history.pushState(null, "", to);
-      if (onClick) onClick(e);
-    },
-    [onClick, to]
-  );
-  return (
-    <RoundButtonContainer
-      size={size}
-      gradientFromColor={gradientFromColor}
-      gradientToColor={gradientToColor}
-      border={border}
-      onClick={_onClick}
-    >
-      {children}
-    </RoundButtonContainer>
-  );
-};
+}) => (
+  <RoundButtonContainer
+    size={size}
+    gradientFromColor={gradientFromColor}
+    gradientToColor={gradientToColor}
+    border={border}
+  >
+    {children}
+  </RoundButtonContainer>
+);
 export { Button, RoundButton };
