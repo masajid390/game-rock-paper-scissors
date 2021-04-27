@@ -17,7 +17,7 @@ const Column = styled("div")<FlexProps>`
   ${({ alignItems }) =>
     alignItems &&
     css`
-      justify-content: ${alignItems};
+      align-items: ${alignItems};
     `}
 `;
 
@@ -33,7 +33,7 @@ const Row = styled("div")<FlexProps>`
   ${({ alignItems }) =>
     alignItems &&
     css`
-      justify-content: ${alignItems};
+      align-items: ${alignItems};
     `}
 `;
 
