@@ -34,9 +34,19 @@ interface RoundButtonContainerProps {
   gradientFromColor: string;
   gradientToColor: string;
   border: number;
+  color?: string;
+  background?: string;
 }
 const RoundButtonContainer = styled("div")<RoundButtonContainerProps>`
-  ${({ size, gradientFromColor, gradientToColor, border }) => {
+  ${({
+    theme: { colors },
+    size,
+    gradientFromColor,
+    gradientToColor,
+    border,
+    color,
+    background,
+  }) => {
     const shadow = border / 2.5;
     return `
       width: ${size}px;
@@ -47,10 +57,11 @@ const RoundButtonContainer = styled("div")<RoundButtonContainerProps>`
       border-radius: 50%;
       border: ${border}px solid ${gradientToColor};
       border-bottom: ${border - shadow}px solid ${gradientToColor};
-      background: white;
+      background: ${background ?? colors.main};
       box-shadow: 0 ${shadow}px ${gradientFromColor}, inset 0 ${shadow}px lightgrey;
       cursor: pointer;
       user-select: none;
+      color: ${color ?? colors.secondary};
   `;
   }}
 `;
