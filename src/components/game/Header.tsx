@@ -1,6 +1,7 @@
 import { FC, memo } from "react";
 import styled from "styled-components";
 import { down } from "styled-breakpoints";
+import { Row } from "../lib/Grid";
 
 const Container = styled.div`
   border: 2px solid hsl(217, 16%, 45%);
@@ -9,9 +10,6 @@ const Container = styled.div`
     `${theme.gutterSpace * 2}px ${theme.gutterSpace * 2}px ${
       theme.gutterSpace * 2
     }px ${theme.gutterSpace * 4}px`};
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 `;
 
 const Title = styled.div`
@@ -62,23 +60,29 @@ const ScoreText = styled.div`
   }
 `;
 
+const BaseHeader: FC = ({ children }) => {
+  return <Container>{children}</Container>;
+};
+
 interface HeaderProps {
   score: number;
 }
 const Header: FC<HeaderProps> = memo(({ score }) => {
   return (
-    <Container>
-      <Title>
-        {["Rock", "Paper", "Scissors"].map((text, key) => (
-          <TitleWord key={key}>{text}</TitleWord>
-        ))}
-      </Title>
-      <ScoreContainer>
-        <ScoreTitle>Score</ScoreTitle>
-        <ScoreText>{score}</ScoreText>
-      </ScoreContainer>
-    </Container>
+    <BaseHeader>
+      <Row justifyContent="space-between" alignItems="center">
+        <Title>
+          {["Rock", "Paper", "Scissors"].map((text, key) => (
+            <TitleWord key={key}>{text}</TitleWord>
+          ))}
+        </Title>
+        <ScoreContainer>
+          <ScoreTitle>Score</ScoreTitle>
+          <ScoreText>{score}</ScoreText>
+        </ScoreContainer>
+      </Row>
+    </BaseHeader>
   );
 });
 
-export { Header };
+export { BaseHeader, Header };
