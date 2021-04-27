@@ -2,10 +2,14 @@ import { FC, memo } from "react";
 import styled from "styled-components";
 import { down } from "styled-breakpoints";
 import { Row } from "../lib/Grid";
+import { GameMode } from "../../interfaces/game";
 
-const Container = styled.div`
+const BaseHeaderContainer = styled.div`
   border: 2px solid hsl(217, 16%, 45%);
   border-radius: ${({ theme }) => `${theme.borderRadius}`};
+`;
+
+const Container = styled.div`
   padding: ${({ theme }) =>
     `${theme.gutterSpace * 2}px ${theme.gutterSpace * 2}px ${
       theme.gutterSpace * 2
@@ -61,26 +65,33 @@ const ScoreText = styled.div`
 `;
 
 const BaseHeader: FC = ({ children }) => {
-  return <Container>{children}</Container>;
+  return <BaseHeaderContainer>{children}</BaseHeaderContainer>;
 };
 
 interface HeaderProps {
   score: number;
+  gameMode: GameMode;
 }
-const Header: FC<HeaderProps> = memo(({ score }) => {
+const Header: FC<HeaderProps> = memo(({ score, gameMode }) => {
+  let title: string[] = ["Rock", "Paper", "Scissors"];
+  if (gameMode === "Advance") {
+    title = [...title, "Lizard", "Spock"];
+  }
   return (
     <BaseHeader>
-      <Row justifyContent="space-between" alignItems="center">
-        <Title>
-          {["Rock", "Paper", "Scissors"].map((text, key) => (
-            <TitleWord key={key}>{text}</TitleWord>
-          ))}
-        </Title>
-        <ScoreContainer>
-          <ScoreTitle>Score</ScoreTitle>
-          <ScoreText>{score}</ScoreText>
-        </ScoreContainer>
-      </Row>
+      <Container>
+        <Row justifyContent="space-between" alignItems="center">
+          <Title>
+            {title.map((text, key) => (
+              <TitleWord key={key}>{text}</TitleWord>
+            ))}
+          </Title>
+          <ScoreContainer>
+            <ScoreTitle>Score</ScoreTitle>
+            <ScoreText>{score}</ScoreText>
+          </ScoreContainer>
+        </Row>
+      </Container>
     </BaseHeader>
   );
 });
