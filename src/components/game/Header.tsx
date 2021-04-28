@@ -1,8 +1,8 @@
-import { FC, memo } from "react";
+import { FC, memo, useContext } from "react";
 import styled from "styled-components";
 import { down } from "styled-breakpoints";
 import { Row } from "../lib/Grid";
-import { GameMode } from "../../interfaces/game";
+import { GameContext } from "../../context/game";
 
 const BaseHeaderContainer = styled.div`
   border: 2px solid hsl(217, 16%, 45%);
@@ -70,9 +70,9 @@ const BaseHeader: FC = ({ children }) => {
 
 interface HeaderProps {
   score: number;
-  gameMode: GameMode;
 }
-const Header: FC<HeaderProps> = memo(({ score, gameMode }) => {
+const Header: FC<HeaderProps> = memo(({ score }) => {
+  const { gameMode } = useContext(GameContext);
   let title: string[] = ["Rock", "Paper", "Scissors"];
   if (gameMode === "Advance") {
     title = [...title, "Lizard", "Spock"];

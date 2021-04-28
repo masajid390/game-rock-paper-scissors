@@ -32,6 +32,7 @@ import AdvanceRules from "../../assets/game/rules/advance.svg";
 import { useLocation } from "react-router-dom";
 import { StyledLink } from "../lib/StyledLink";
 import { AppContext } from "../../context/app";
+import { GameContext, GameProvider } from "../../context/game";
 
 const Container = styled("div")<{ isMobile: boolean | null }>`
 ${({ theme, isMobile }) => `
@@ -187,7 +188,6 @@ const useAdvanceGameUI = (isMobile: boolean | null): GameUI => {
 };
 
 interface PlayAreaProps {
-  gameMode: GameMode;
   gameUI: GameUI;
   step: Step;
   userSelected?: SelectionControl;
@@ -198,7 +198,6 @@ interface PlayAreaProps {
   playAgain: () => void;
 }
 const PlayArea: FC<PlayAreaProps> = ({
-  gameMode,
   gameUI,
   step,
   userSelected,
@@ -210,6 +209,7 @@ const PlayArea: FC<PlayAreaProps> = ({
 }) => {
   const { controls, backgroundSrc } = gameUI;
   const { isMobile } = useContext(AppContext);
+  const { gameMode } = useContext(GameContext);
   if (step === "UserTurn") {
     return (
       <UserTurnContainer isMobile={isMobile} gameMode={gameMode}>
@@ -226,7 +226,6 @@ const PlayArea: FC<PlayAreaProps> = ({
     return (
       <ComputerTurnContainer isMobile={isMobile}>
         <ComputerTurn
-          gameMode={gameMode}
           timeToThink={1000}
           userSelected={userSelected}
           computerTurn={computerTurn}
@@ -239,7 +238,6 @@ const PlayArea: FC<PlayAreaProps> = ({
     return (
       <ComputerTurnContainer isMobile={isMobile}>
         <ComputerTurn
-          gameMode={gameMode}
           timeToThink={0}
           userSelected={userSelected}
           computerSelected={computerSelected}
@@ -253,7 +251,6 @@ const PlayArea: FC<PlayAreaProps> = ({
     return (
       <ComputerTurnContainer isMobile={isMobile}>
         <ComputerTurn
-          gameMode={gameMode}
           userSelected={userSelected}
           computerSelected={computerSelected}
           win={win}
@@ -323,16 +320,15 @@ const appReducer = (state: GameState, action: Action): GameState => {
   }
 };
 const SCORE_KEY = "__ROCK_PAPER_SCISSORS_SCORE__";
-interface GameProps {
-  gameMode: GameMode;
-}
-const Game: FC<GameProps> = memo(({ gameMode }) => {
+
+const Game = memo(() => {
   const [state, dispatch] = useReducer(appReducer, {
     score: 0,
     currentStep: "UserTurn",
   });
   const [showRules, setShowRules] = useState<boolean>(false);
   const { isMobile } = useContext(AppContext);
+  const { gameMode } = useContext(GameContext);
   const { getLocalStorage, setLocalStorage } = useLocalStorage();
   const basicGameUI: GameUI = useBasicGameUI(isMobile);
   const advanceGameUI: GameUI = useAdvanceGameUI(isMobile);
@@ -397,10 +393,9 @@ const Game: FC<GameProps> = memo(({ gameMode }) => {
     <Container isMobile={isMobile}>
       <GameContent>
         <HeaderContainer>
-          <Header score={state.score} gameMode={gameMode} />
+          <Header score={state.score} />
         </HeaderContainer>
         <PlayArea
-          gameMode={gameMode}
           gameUI={gameUI}
           step={state.currentStep}
           userSelected={userSelected}
@@ -433,7 +428,11 @@ const Game: FC<GameProps> = memo(({ gameMode }) => {
 const GameContainer = memo(() => {
   const { pathname } = useLocation();
   const gameMode: GameMode = pathname === "/Advance" ? "Advance" : "Basic";
-  return <Game gameMode={gameMode} />;
+  return (
+    <GameProvider gameMode={gameMode}>
+      <Game />
+    </GameProvider>
+  );
 });
 
 export { Game, GameContainer };

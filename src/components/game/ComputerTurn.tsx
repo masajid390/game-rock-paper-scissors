@@ -1,9 +1,10 @@
 import { FC, useEffect, memo, useContext } from "react";
 import styled from "styled-components";
-import { GameMode, SelectionControl } from "../../interfaces/game";
+import { SelectionControl } from "../../interfaces/game";
 import { Button, RoundButton } from "../lib/Button";
 import { WaveBox } from "../lib/WaveBox";
 import { AppContext } from "../../context/app";
+import { GameContext } from "../../context/game";
 
 const Container = styled("div")<{ zIndex?: number }>`
   ${({ zIndex = 1 }) => `
@@ -70,31 +71,31 @@ const CelebrationContainer = styled("div")<{ top: string }>`
   `}
 `;
 
-const Celebration: FC<{ isMobile: boolean | null; gameMode: GameMode }> = ({
-  isMobile,
-  gameMode,
-}) => (
-  <CelebrationContainer
-    top={
-      gameMode === "Basic"
-        ? isMobile
-          ? "-41%"
-          : "-13%"
-        : isMobile
-        ? "-50%"
-        : "-24%"
-    }
-  >
-    <WaveBox
-      gradients={Array(3).fill({
-        start: "hsl(214deg 50% 34%)",
-        end: "hsl(214deg 63% 22%)",
-      })}
-      stepHeight={isMobile ? 60 : 80}
-      radius={isMobile ? 120 : 180}
-    />
-  </CelebrationContainer>
-);
+const Celebration: FC<{ isMobile: boolean | null }> = ({ isMobile }) => {
+  const { gameMode } = useContext(GameContext);
+  return (
+    <CelebrationContainer
+      top={
+        gameMode === "Basic"
+          ? isMobile
+            ? "-41%"
+            : "-13%"
+          : isMobile
+          ? "-50%"
+          : "-24%"
+      }
+    >
+      <WaveBox
+        gradients={Array(3).fill({
+          start: "hsl(214deg 50% 34%)",
+          end: "hsl(214deg 63% 22%)",
+        })}
+        stepHeight={isMobile ? 60 : 80}
+        radius={isMobile ? 120 : 180}
+      />
+    </CelebrationContainer>
+  );
+};
 
 interface WinLossProps {
   playAgain?: () => void;
@@ -123,7 +124,6 @@ const YouLoss: FC<WinLossProps> = ({ playAgain }) => (
 );
 
 interface ComputerTurnProps {
-  gameMode: GameMode;
   timeToThink?: number;
   userSelected: SelectionControl;
   computerSelected?: SelectionControl;
@@ -134,7 +134,6 @@ interface ComputerTurnProps {
 
 const ComputerTurn: FC<ComputerTurnProps> = memo(
   ({
-    gameMode,
     timeToThink,
     userSelected,
     computerSelected,
@@ -172,7 +171,7 @@ const ComputerTurn: FC<ComputerTurnProps> = memo(
                 </RoundButton>
               </Order>
             </Container>
-            {win && <Celebration isMobile={isMobile} gameMode={gameMode} />}
+            {win && <Celebration isMobile={isMobile} />}
           </Column>
           {!isMobile && win !== undefined && (
             <Column zIndex={3}>
@@ -201,9 +200,7 @@ const ComputerTurn: FC<ComputerTurnProps> = memo(
                 )}
               </Order>
             </Container>
-            {win === false && (
-              <Celebration isMobile={isMobile} gameMode={gameMode} />
-            )}
+            {win === false && <Celebration isMobile={isMobile} />}
           </Column>
         </Row>
         {isMobile && win !== undefined && (
