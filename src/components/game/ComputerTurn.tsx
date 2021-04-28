@@ -1,10 +1,9 @@
-import { FC, useEffect, memo } from "react";
+import { FC, useEffect, memo, useContext } from "react";
 import styled from "styled-components";
 import { GameMode, SelectionControl } from "../../interfaces/game";
 import { Button, RoundButton } from "../lib/Button";
-import { useBreakpoint } from "styled-breakpoints/react-styled";
-import { down } from "styled-breakpoints";
 import { WaveBox } from "../lib/WaveBox";
+import { AppContext } from "../../context/app";
 
 const Container = styled("div")<{ zIndex?: number }>`
   ${({ zIndex = 1 }) => `
@@ -143,7 +142,7 @@ const ComputerTurn: FC<ComputerTurnProps> = memo(
     computerTurn,
     playAgain,
   }) => {
-    const isMobile = useBreakpoint(down("xs"));
+    const { isMobile } = useContext(AppContext);
 
     useEffect(() => {
       let timer: NodeJS.Timeout;

@@ -2,6 +2,7 @@ import {
   FC,
   memo,
   useCallback,
+  useContext,
   useEffect,
   useMemo,
   useReducer,
@@ -22,8 +23,6 @@ import {
   BGPentagon,
 } from "../lib/icons";
 import { GameUI, SelectionControl, GameMode } from "../../interfaces/game";
-import { useBreakpoint } from "styled-breakpoints/react-styled";
-import { down } from "styled-breakpoints";
 import { ComputerTurn } from "./ComputerTurn";
 import { Modal } from "../lib/Modal";
 import { RulesModal } from "./RulesModal";
@@ -32,6 +31,7 @@ import BasicRules from "../../assets/game/rules/basic.svg";
 import AdvanceRules from "../../assets/game/rules/advance.svg";
 import { useLocation } from "react-router-dom";
 import { StyledLink } from "../lib/StyledLink";
+import { AppContext } from "../../context/app";
 
 const Container = styled("div")<{ isMobile: boolean | null }>`
 ${({ theme, isMobile }) => `
@@ -193,7 +193,6 @@ interface PlayAreaProps {
   userSelected?: SelectionControl;
   computerSelected?: SelectionControl;
   win?: boolean;
-  isMobile: boolean | null;
   userTurn: (userSelectedId: string) => void;
   computerTurn: () => void;
   playAgain: () => void;
@@ -205,12 +204,12 @@ const PlayArea: FC<PlayAreaProps> = ({
   userSelected,
   computerSelected,
   win,
-  isMobile,
   userTurn,
   computerTurn,
   playAgain,
 }) => {
   const { controls, backgroundSrc } = gameUI;
+  const { isMobile } = useContext(AppContext);
   if (step === "UserTurn") {
     return (
       <UserTurnContainer isMobile={isMobile} gameMode={gameMode}>
@@ -333,7 +332,7 @@ const Game: FC<GameProps> = memo(({ gameMode }) => {
     currentStep: "UserTurn",
   });
   const [showRules, setShowRules] = useState<boolean>(false);
-  const isMobile = useBreakpoint(down("xs"));
+  const { isMobile } = useContext(AppContext);
   const { getLocalStorage, setLocalStorage } = useLocalStorage();
   const basicGameUI: GameUI = useBasicGameUI(isMobile);
   const advanceGameUI: GameUI = useAdvanceGameUI(isMobile);
@@ -407,7 +406,6 @@ const Game: FC<GameProps> = memo(({ gameMode }) => {
           userSelected={userSelected}
           computerSelected={computerSelected}
           win={state.win}
-          isMobile={isMobile}
           userTurn={userTurn}
           computerTurn={computerTurn}
           playAgain={playAgain}

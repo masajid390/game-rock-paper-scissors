@@ -1,7 +1,7 @@
-import { memo } from "react";
+import { memo, useContext } from "react";
 import { down } from "styled-breakpoints";
-import { useBreakpoint } from "styled-breakpoints/react-styled";
 import styled from "styled-components";
+import { AppContext } from "../../context/app";
 import { RoundButton, RoundButtonProps } from "../lib/Button";
 import { Column, Row } from "../lib/Grid";
 import { StyledLink } from "../lib/StyledLink";
@@ -53,7 +53,7 @@ interface LevelControl extends RoundButtonProps {
 }
 
 const GameModes = memo(() => {
-  const isMobile = useBreakpoint(down("xs"));
+  const { isMobile } = useContext(AppContext);
   const size: number = isMobile ? 100 : 150;
   const border: number = isMobile ? 15 : 20;
   const controls: LevelControl[] = [
