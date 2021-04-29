@@ -112,10 +112,10 @@ const YouWin: FC<WinLossProps> = ({ playAgain }) => (
   </>
 );
 
-const YouLoss: FC<WinLossProps> = ({ playAgain }) => (
+const YouLose: FC<WinLossProps> = ({ playAgain }) => (
   <>
     <Text fontSize={42} margin={"16px 0"}>
-      You Loss
+      You Lose
     </Text>
     <Button onClick={playAgain} color="hsl(349, 71%, 52%)" background="main">
       Play Again
@@ -178,7 +178,7 @@ const ComputerTurn: FC<ComputerTurnProps> = memo(
               {win ? (
                 <YouWin playAgain={playAgain} />
               ) : (
-                <YouLoss playAgain={playAgain} />
+                <YouLose playAgain={playAgain} />
               )}
             </Column>
           )}
@@ -209,7 +209,7 @@ const ComputerTurn: FC<ComputerTurnProps> = memo(
               {win ? (
                 <YouWin playAgain={playAgain} />
               ) : (
-                <YouLoss playAgain={playAgain} />
+                <YouLose playAgain={playAgain} />
               )}
             </Column>
           </Row>
