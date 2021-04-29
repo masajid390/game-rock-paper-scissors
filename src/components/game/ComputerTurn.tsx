@@ -185,7 +185,7 @@ const ComputerTurn: FC<ComputerTurnProps> = memo(
           <Column zIndex={1}>
             <Container>
               <Order order={isMobile ? 2 : 1}>
-                <Text fontSize={isMobile ? 16 : 22}>The House Picked</Text>
+                <Text fontSize={isMobile ? 16 : 22}>Computer Picked</Text>
               </Order>
               <Order order={isMobile ? 1 : 2}>
                 {computerSelected ? (
