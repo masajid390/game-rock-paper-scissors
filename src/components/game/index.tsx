@@ -323,6 +323,9 @@ const appReducer = (state: GameState, action: Action): GameState => {
 };
 const SCORE_KEY = "__ROCK_PAPER_SCISSORS_SCORE__";
 
+const getScoreKey = (gameMode: GameMode) =>
+  `${SCORE_KEY}${gameMode.toLocaleUpperCase()}__`;
+
 const Game = memo(() => {
   const [state, dispatch] = useReducer(appReducer, {
     score: 0,
@@ -342,13 +345,14 @@ const Game = memo(() => {
   );
   const step = state.currentStep;
   const score = state.score;
+  const scoreKey = getScoreKey(gameMode);
 
   useEffect(() => {
-    const existingScore = getLocalStorage(SCORE_KEY);
+    const existingScore = getLocalStorage(scoreKey);
     if (existingScore !== null) {
       dispatch({ type: "SetScoreFromLocalStorage", payload: existingScore });
     }
-  }, [getLocalStorage, dispatch]);
+  }, [getLocalStorage, dispatch, scoreKey]);
 
   const closeRules = useCallback(() => setShowRules(false), []);
 
@@ -371,7 +375,7 @@ const Game = memo(() => {
     } else if (step === "ComputerTurned" && computerSelected) {
       const win = userSelected?.canBeat.includes(computerSelected.id); // constructing win state
       const newScore = win ? score + 1 : score - 1;
-      setLocalStorage(SCORE_KEY, newScore);
+      setLocalStorage(scoreKey, newScore);
       dispatch({
         type: "Result",
         payload: { win, score: newScore },
@@ -385,6 +389,7 @@ const Game = memo(() => {
     step,
     score,
     setLocalStorage,
+    scoreKey,
   ]);
 
   const playAgain = useCallback(() => dispatch({ type: "PlayAgain" }), [
