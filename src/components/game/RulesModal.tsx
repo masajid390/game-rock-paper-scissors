@@ -1,7 +1,8 @@
-import { FC } from "react";
+import { FC, useContext } from "react";
 import { CloseIcon } from "../lib/icons";
 import { down } from "styled-breakpoints";
 import styled from "styled-components";
+import { AppContext } from "../../context/app";
 
 const Container = styled.div`
   ${({ theme: { colors, gutterSpace, borderRadius } }) => `
@@ -39,12 +40,12 @@ const CloseButton = styled.div`
 `;
 
 interface RulesModalProps {
-  isMobile: boolean | null;
   imageSrc: string;
   close: () => void;
 }
 
-const RulesModal: FC<RulesModalProps> = ({ isMobile, imageSrc, close }) => {
+const RulesModal: FC<RulesModalProps> = ({ imageSrc, close }) => {
+  const { isMobile } = useContext(AppContext);
   return (
     <Container>
       <HeadingContainer>

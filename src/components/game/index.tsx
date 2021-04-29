@@ -415,7 +415,6 @@ const Game = memo(() => {
       {showRules && (
         <Modal>
           <RulesModal
-            isMobile={isMobile}
             close={closeRules}
             imageSrc={gameMode === "Basic" ? BasicRules : AdvanceRules}
           />
