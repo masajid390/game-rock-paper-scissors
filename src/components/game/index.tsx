@@ -33,40 +33,52 @@ import { useLocation } from "react-router-dom";
 import { StyledLink } from "../lib/StyledLink";
 import { AppContext } from "../../context/app";
 import { GameContext, GameProvider } from "../../context/game";
+import { down } from "styled-breakpoints";
 
-const Container = styled("div")<{ isMobile: boolean | null }>`
-${({ theme, isMobile }) => `
-    padding: ${theme.gutterSpace * (isMobile ? 3 : 6)}px;
-    height: calc(100% - ${theme.gutterSpace * (isMobile ? 3 : 6) * 2}px);
-    overflow: hidden;
-  `}}
-`;
-
-const UserTurnContainer = styled("div")<{
-  isMobile: boolean | null;
-  gameMode: GameMode;
-}>`
-${({ isMobile, gameMode }) => `
-    margin-top: ${isMobile ? "45%" : gameMode === "Basic" ? "40%" : "30%"};
-  `}}
-`;
-
-const ComputerTurnContainer = styled("div")<{ isMobile: boolean | null }>`
-${({ isMobile }) => `
-    margin-top: ${isMobile ? "10%" : "28%"};
-  `}}
+const Container = styled.div`
+  height: 100%;
+  overflow: hidden;
 `;
 
 const GameContent = styled.div`
-  max-width: 700px;
-  margin: 0 auto;
-  height: calc(100% - 32px);
   display: flex;
   flex-direction: column;
+  height: 100%;
+  justify-content: center;
+  max-width: 700px;
+  margin: 0 auto;
 `;
 
 const HeaderContainer = styled.div`
-  z-index: 2;
+  ${({ theme: { gutterSpace } }) => `
+    position: fixed;
+    top: ${gutterSpace * 6}px;
+    left: ${gutterSpace * 6}px;
+    right: ${gutterSpace * 6}px;
+    z-index: 2;
+    max-width: 700px;
+    margin: 0 auto;
+  `}
+  ${down("xs")} {
+    top: ${({ theme: { gutterSpace } }) => `${gutterSpace * 3}px;`};
+    left: ${({ theme: { gutterSpace } }) => `${gutterSpace * 3}px;`};
+    right: ${({ theme: { gutterSpace } }) => `${gutterSpace * 3}px;`};
+  }
+`;
+
+const FooterContainer = styled.div`
+  ${({ theme: { gutterSpace } }) => `
+    position: fixed;
+    left: ${gutterSpace * 6}px;
+    right: ${gutterSpace * 6}px;
+    bottom: ${gutterSpace * 6}px;
+    z-index: 2;
+  `}
+  ${down("xs")} {
+    left: ${({ theme: { gutterSpace } }) => `${gutterSpace * 3}px;`};
+    right: ${({ theme: { gutterSpace } }) => `${gutterSpace * 3}px;`};
+    bottom: ${({ theme: { gutterSpace } }) => `${gutterSpace * 3}px;`};
+  }
 `;
 
 type Step = "UserTurn" | "WaitingForComputerTurn" | "ComputerTurned" | "Result";
@@ -208,55 +220,45 @@ const PlayArea: FC<PlayAreaProps> = ({
   playAgain,
 }) => {
   const { controls, backgroundSrc } = gameUI;
-  const { isMobile } = useContext(AppContext);
-  const { gameMode } = useContext(GameContext);
   if (step === "UserTurn") {
     return (
-      <UserTurnContainer isMobile={isMobile} gameMode={gameMode}>
-        <UserTurn
-          controls={controls}
-          backgroundSrc={backgroundSrc}
-          userTurn={userTurn}
-        />
-      </UserTurnContainer>
+      <UserTurn
+        controls={controls}
+        backgroundSrc={backgroundSrc}
+        userTurn={userTurn}
+      />
     );
   }
 
   if (step === "WaitingForComputerTurn" && userSelected) {
     return (
-      <ComputerTurnContainer isMobile={isMobile}>
-        <ComputerTurn
-          timeToThink={1000}
-          userSelected={userSelected}
-          computerTurn={computerTurn}
-        />
-      </ComputerTurnContainer>
+      <ComputerTurn
+        timeToThink={1000}
+        userSelected={userSelected}
+        computerTurn={computerTurn}
+      />
     );
   }
 
   if (step === "ComputerTurned" && userSelected) {
     return (
-      <ComputerTurnContainer isMobile={isMobile}>
-        <ComputerTurn
-          timeToThink={0}
-          userSelected={userSelected}
-          computerSelected={computerSelected}
-          computerTurn={computerTurn}
-        />
-      </ComputerTurnContainer>
+      <ComputerTurn
+        timeToThink={0}
+        userSelected={userSelected}
+        computerSelected={computerSelected}
+        computerTurn={computerTurn}
+      />
     );
   }
 
   if (step === "Result" && userSelected) {
     return (
-      <ComputerTurnContainer isMobile={isMobile}>
-        <ComputerTurn
-          userSelected={userSelected}
-          computerSelected={computerSelected}
-          win={win}
-          playAgain={playAgain}
-        />
-      </ComputerTurnContainer>
+      <ComputerTurn
+        userSelected={userSelected}
+        computerSelected={computerSelected}
+        win={win}
+        playAgain={playAgain}
+      />
     );
   }
 
@@ -390,11 +392,11 @@ const Game = memo(() => {
   ]);
 
   return (
-    <Container isMobile={isMobile}>
+    <Container>
+      <HeaderContainer>
+        <Header score={state.score} />
+      </HeaderContainer>
       <GameContent>
-        <HeaderContainer>
-          <Header score={state.score} />
-        </HeaderContainer>
         <PlayArea
           gameUI={gameUI}
           step={state.currentStep}
@@ -406,12 +408,14 @@ const Game = memo(() => {
           playAgain={playAgain}
         />
       </GameContent>
-      <ActionBar>
-        <StyledLink to="/">
-          <Button>Modes</Button>
-        </StyledLink>
-        <Button onClick={() => setShowRules(true)}>Rules</Button>
-      </ActionBar>
+      <FooterContainer>
+        <ActionBar>
+          <StyledLink to="/">
+            <Button>Modes</Button>
+          </StyledLink>
+          <Button onClick={() => setShowRules(true)}>Rules</Button>
+        </ActionBar>
+      </FooterContainer>
       {showRules && (
         <Modal>
           <RulesModal
