@@ -2,7 +2,7 @@ import { FC } from "react";
 import styled, { ThemeProvider } from "styled-components";
 import { theme } from "./theme";
 import { GameContainer } from "./components/game";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { HashRouter as Router, Switch, Route } from "react-router-dom";
 import { GameModes } from "./components/game/GameModes";
 import { useBreakpoint } from "styled-breakpoints/react-styled";
 import { down } from "styled-breakpoints";
