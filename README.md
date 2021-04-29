@@ -1,6 +1,6 @@
 # Game (Rock, Paper, Scissors, Lizard, Spock)
 
-Rock paper scissors is a hand game usually played between two people, in which each player simultaneously forms one of three shapes with an outstretched hand. These shapes are "rock", "paper", and "scissors". Let's [Play Online](https://masajid390.github.io/rock-paper-scissors).
+Rock paper scissors is a hand game usually played between two people, in which each player simultaneously forms one of three shapes with an outstretched hand. These shapes are "rock", "paper", and "scissors". Let's [Play Online](https://masajid390.github.io/game-rock-paper-scissors).
 
 ## Modes
 
