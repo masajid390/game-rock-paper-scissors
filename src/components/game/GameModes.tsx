@@ -48,6 +48,16 @@ const HeaderText = styled.div`
   padding: ${({ theme: { gutterSpace } }) => `${gutterSpace * 2}px;`};
 `;
 
+const YouVsComputer = styled.h1`
+  margin: 0;
+  font-size: 32px;
+  margin-bottom: 16px;
+  color: hsl(40, 84%, 53%);
+  ${down("xs")} {
+    font-size: 22px;
+  }
+`;
+
 interface LevelControl extends RoundButtonProps {
   text: string;
 }
@@ -66,8 +76,8 @@ const GameModes = memo(() => {
     },
     {
       text: "Advance",
-      gradientFromColor: "hsl(39, 89%, 49%)",
-      gradientToColor: "hsl(40, 84%, 53%)",
+      gradientFromColor: "hsl(349, 71%, 52%)",
+      gradientToColor: "hsl(349, 70%, 56%)",
       size,
       border,
     },
@@ -81,6 +91,7 @@ const GameModes = memo(() => {
               <HeaderText key={key}>{text}</HeaderText>
             ))}
           </Row>
+          <YouVsComputer>You vs Computer</YouVsComputer>
         </BaseHeader>
       </Header>
       <Column justifyContent="center">
